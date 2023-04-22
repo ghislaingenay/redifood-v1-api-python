@@ -1,0 +1,1 @@
+# Create a moderator to verify that the user is authenticated from JWT token
