@@ -1,6 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import AuthenticationFailed
 from serializers import UserSerializer
+from .models import User
+from .password_manager import PasswordManager
+import jwt, datetime
 # Create your views here.
 
 class RegisterView(APIView):
@@ -15,14 +19,29 @@ class RegisterView(APIView):
 
 class LoginView(APIView):
     def post(self, request):
-      pass
+      email = request.data.get('email')
+      password = request.data.get('password')
+      user = User.objects.get(email=email)
+      if User is None:
+        raise AuthenticationFailed('Invalid credentials')
+      if not user.check_password(password):
+        raise AuthenticationFailed('Invalid credentials')
+      return PasswordManager().generate_token()
     
-class LogoutView(APIView):
-    def post(self, request):
-      pass
-    
+
 class CurrentUserView(APIView):
-  login_required = True
   # Need to create a decorator to check if user is logged in
   def get(self, request):
-    pass
+    token = request.COOKIES.get('jwt')
+    payload = PasswordManager().verify_token(token)
+    user = User.objects.filter(id=payload['id'])
+    serializer= UserSerializer(user)
+    return Response(serializer.data)
+
+class LogoutView(APIView):
+    def post(self, request):
+      response = Response()
+      response.delete_cookie('jwt')
+      response.data = { 'message': 'Success'}
+      return response
+    
