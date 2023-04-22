@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'users.apps.UsersConfig',
-     "corsheaders",
+    "corsheaders",
     'rest_framework',
 ]
 
@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'food_pos_api.urls'
@@ -118,6 +119,7 @@ USE_I18N = True
 USE_TZ = True
 
 CORS_ALLOW_ALL_ORIGINS=True
+CORS_ALLOW_CREDENTIALS=True # Login with cookie otherwise front-end won't get the cookie
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
