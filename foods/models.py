@@ -1,7 +1,5 @@
 from django.db import models
 
-def 
-
 # Create your models here.
 class Food(models.Model):
     food_name = models.CharField(max_length=100,null=False, required=True)
