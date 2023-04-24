@@ -44,10 +44,12 @@ class LoginView(APIView):
 class CurrentUserView(APIView):
   # Need to create a decorator to check if user is logged in
   def get(self, request):
-    token = request.COOKIES.get('jwt')
+    print('ck', request.COOKIES)
+    token = request.COOKIES['jwt']
     payload = JWTManager().verify_token(token)
-    user = User.objects.filter(id=payload['id'])
-    serializer= UserSerializer(user)
+    print('recovered payload', payload)
+    user = User.objects.filter(id=payload['id'], email=payload['email'])
+    serializer = UserSerializer(user[0])
     return Response(serializer.data)
 
 class LogoutView(APIView):
