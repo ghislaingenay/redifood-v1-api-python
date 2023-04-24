@@ -1,28 +1,63 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from serializers import UserSerializer
+from rest_framework.exceptions import AuthenticationFailed
+from .serializers import UserSerializer
+from .models import User
+from .jwt_manager import JWTManager
+from django.shortcuts import get_object_or_404
 # Create your views here.
 
 class RegisterView(APIView):
     def post(self, request):
-      # Add validations system
-      # Add JWT token system
       serializer = UserSerializer(data=request.data)
       if serializer.is_valid(raise_exception=True):
+        email = serializer.validated_data['email']
         serializer.save()
-        return Response(serializer.data)
+        user_id = self.get_user_id(email)
+        print('usr', user_id)
+        return JWTManager().generate_token(user_id,email)
+        
+    def get_user_id(self, email: str) -> int:
+      try:
+        print('email', email)
+        user = get_object_or_404(User, email=email)
+        print('recovered user')
+        serializer = UserSerializer(user)
+        return serializer.data['id']
+      except User.DoesNotExist:
+        raise AuthenticationFailed('User not found')
       
 
 class LoginView(APIView):
     def post(self, request):
-      pass
+      email = request.data.get('email')
+      password = request.data.get('password')
+      user = User.objects.get(email=email)
+      print('user', user)
+      if User is None:
+        raise AuthenticationFailed('Invalid credentials')
+      if not user.check_password(password):
+        raise AuthenticationFailed('Invalid credentials')
+      return JWTManager().generate_token(user.id, email)
     
-class LogoutView(APIView):
-    def post(self, request):
-      pass
-    
+
 class CurrentUserView(APIView):
-  login_required = True
   # Need to create a decorator to check if user is logged in
   def get(self, request):
-    pass
+    print('ck', request.COOKIES)
+    token = request.COOKIES['jwt']
+    payload = JWTManager().verify_token(token)
+    print('recovered payload', payload)
+    user = User.objects.filter(id=payload['id'], email=payload['email'])
+    serializer = UserSerializer(user[0])
+    return Response(serializer.data)
+
+class LogoutView(APIView):
+    def post(self, request):
+      response = Response()
+      response.delete_cookie('jwt')
+      response.data = { 'message': 'Success'}
+      return response
+    
+
+    
