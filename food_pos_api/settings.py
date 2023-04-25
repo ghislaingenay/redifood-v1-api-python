@@ -56,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     
-    'users.auth_decorators.AuthenticationMiddleware',
+    #'users.auth_decorators.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'food_pos_api.urls'

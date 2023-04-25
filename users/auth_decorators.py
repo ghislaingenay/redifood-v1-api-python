@@ -19,14 +19,17 @@ class AuthenticationMiddleware:
 
   def process_view(self, request, view_func, view_args, view_kwargs):
     auth_list = ['login', 'register', 'logout']
+    print('view_func',view_func.__name__)
     if view_func.__name__ not in auth_list:
       print('user', request.user)
       jwt_token = request.COOKIES['jwt']
       payload = JWTManager().verify_token(jwt_token)
       print('payload', payload)
       request.user = payload
+      print('entered here')
       return view_func(request)
     else:
+      print('logged')
       return view_func(request)
     
   def process_exception(self, request, exception):
