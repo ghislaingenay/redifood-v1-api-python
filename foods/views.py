@@ -1,7 +1,6 @@
 from django.db import connection
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from users.auth_decorators import is_authenticated
 
 # Create your views here. 
 class GetFoodsView(APIView):
@@ -11,3 +10,11 @@ class GetFoodsView(APIView):
       cursor.execute('SELECT * FROM foods_food')
       rows = cursor.fetchall()
       return Response(rows)
+    
+    
+class FoodIdView(APIView):
+    def get(self, request, food_id):
+      with connection.cursor() as cursor:
+        cursor.execute(f'SELECT * FROM foods_food WHERE id = {food_id}')
+        rows = cursor.fetchall()
+        return Response(rows)
