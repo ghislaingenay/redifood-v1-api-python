@@ -13,8 +13,13 @@ class GetFoodsView(APIView):
     
     
 class FoodIdView(APIView):
-    def get(self, request, food_id):
-      with connection.cursor() as cursor:
-        cursor.execute(f'SELECT * FROM foods_food WHERE id = {food_id}')
-        rows = cursor.fetchall()
-        return Response(rows)
+  def get(self, request, food_id):
+    with connection.cursor() as cursor:
+      cursor.execute(f'SELECT * FROM foods_food WHERE id = {food_id}')
+      rows = cursor.fetchall()
+      return Response(rows)
+    
+  def delete(self, request, food_id):
+    with connection.cursor() as cursor:
+      cursor.execute(f'DELETE FROM foods_food WHERE id = {food_id}')
+      return Response({'message': 'Food deleted'})
