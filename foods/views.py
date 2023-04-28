@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from operator import itemgetter
 from foods.cloudinary import Cloudinary
 
-from foods.serializer import FoodSerializer
+from foods.serializers import FoodSerializer
 
 # Create your views here. 
 class GetFoodsView(APIView):
