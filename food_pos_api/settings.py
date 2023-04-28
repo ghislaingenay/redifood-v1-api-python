@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'foods.apps.FoodsConfig',
     "corsheaders",
     'rest_framework',
+    'orders.apps.OrdersConfig'
 ]
 
 AUTH_USER_MODEL = 'users.User'
